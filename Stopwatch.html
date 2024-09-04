@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stopwatch</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #ffd500; /* Set a solid background color instead */
+        }
+
+        .stopwatch {
+            text-align: center;
+            margin-top: 50px;
+        }
+
+        #display {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+
+        button {
+            font-size: 18px;
+            padding: 10px 20px;
+            margin: 5px;
+            border: 2px solid transparent;
+            border-radius: 5px;
+            background-color: #007bff; /* Default color */
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        button:hover {
+            background-color: #0056b3; /* Darker color on hover */
+        }
+
+        button.highlighted {
+            background-color: #28a745; /* Highlight color */
+            transform: scale(1.1); /* Slightly enlarge the button */
+            border-color: #218838; /* Darker border color */
+        }
+
+        ul {
+            list-style: disc inside; /* Bullets with inside alignment */
+            padding: 0;
+            margin-top: 20px;
+        }
+
+        ul li {
+            font-size: 18px;
+            margin-top: 10px;
+            padding: 5px;
+            background-color: #f0f8ff; /* Light blue background for laps */
+            border-radius: 25px;
+            animation: breathe 0.5s ease-in-out; /* Shortened animation time */
+        }
+
+        ul li.highlighted {
+            animation: breathe 0.5s ease-in-out;
+        }
+
+        @keyframes breathe {
+            0%, 100% {
+                background-color: #ffffe0; /* Light yellow */
+            }
+            50% {
+                background-color: #f5f5dc; /* Slightly darker yellow */
+            }
+        }
+
+        #startBtn {
+            background-color: green;
+        }
+
+        #pauseBtn {
+            background-color: red;
+        }
+
+        #resetBtn {
+            background-color: aqua;
+        }
+
+        #lapBtn {
+            background-color: indigo;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="stopwatch">
+        <h1 id="display">00:00:00</h1>
+        <button id="startBtn">Start</button>
+        <button id="pauseBtn" style="display: none;">Pause</button>
+        <button id="resetBtn">Reset</button>
+        <button id="lapBtn">Lap</button>
+        <ul id="laps"></ul>
+    </div>
+
+    <script>
+        let timer;
+        let seconds = 0;
+        let minutes = 0;
+        let hours = 0;
+        let isRunning = false;
+
+        function updateDisplay() {
+            let display = document.getElementById('display');
+            display.innerHTML = 
+                (hours < 10 ? '0' + hours : hours) + ':' + 
+                (minutes < 10 ? '0' + minutes : minutes) + ':' + 
+                (seconds < 10 ? '0' + seconds : seconds);
+        }
+
+        function startStopwatch() {
+            if (!isRunning) {
+                isRunning = true;
+                document.getElementById('startBtn').style.display = 'none';
+                document.getElementById('pauseBtn').style.display = 'inline-block';
+                startTimer();
+            }
+        }
+
+        function startTimer() {
+            timer = setInterval(() => {
+                seconds++;
+                if (seconds === 60) {
+                    seconds = 0;
+                    minutes++;
+                }
+                if (minutes === 60) {
+                    minutes = 0;
+                    hours++;
+                }
+                updateDisplay();
+            }, 1000);
+        }
+
+        function pauseResumeStopwatch() {
+            if (isRunning) {
+                clearInterval(timer);
+                document.getElementById('pauseBtn').textContent = 'Resume';
+                document.getElementById('pauseBtn').style.backgroundColor = 'green';
+            } else {
+                startTimer();
+                document.getElementById('pauseBtn').textContent = 'Pause';
+                document.getElementById('pauseBtn').style.backgroundColor = 'red';
+            }
+            isRunning = !isRunning;
+        }
+
+        function resetStopwatch() {
+            clearInterval(timer);
+            isRunning = false;
+            seconds = 0;
+            minutes = 0;
+            hours = 0;
+            updateDisplay();
+            document.getElementById('laps').innerHTML = '';
+            document.getElementById('startBtn').style.display = 'inline-block';
+            document.getElementById('pauseBtn').style.display = 'none';
+            document.getElementById('pauseBtn').textContent = 'Pause';
+            document.getElementById('pauseBtn').style.backgroundColor = 'red';
+        }
+
+        function recordLap() {
+            if (isRunning) {
+                let lapBtn = document.getElementById('lapBtn');
+                lapBtn.classList.add('highlighted');
+                setTimeout(() => lapBtn.classList.remove('highlighted'), 200);
+
+                let lapTime = document.createElement('li');
+                lapTime.textContent = document.getElementById('display').textContent;
+                lapTime.classList.add('highlighted');
+                document.getElementById('laps').appendChild(lapTime);
+
+                setTimeout(() => lapTime.classList.remove('highlighted'), 1000);
+            }
+        }
+
+        document.getElementById('startBtn').addEventListener('click', startStopwatch);
+        document.getElementById('pauseBtn').addEventListener('click', pauseResumeStopwatch);
+        document.getElementById('resetBtn').addEventListener('click', resetStopwatch);
+        document.getElementById('lapBtn').addEventListener('click', recordLap);
+    </script>
+</body>
+</html>
