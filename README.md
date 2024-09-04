@@ -1,5 +1,5 @@
-
 # Prodigy_WD_02
+##README
 It seems you’ve provided HTML code for a stopwatch along with a mention of "README content." If you need a README file content to accompany this project, here's a simple example that explains the project, how to use it, and any other relevant details:
 
 ---
